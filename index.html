@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDUSMART - Nền tảng Học tập & Game Khu Vườn Tri Thức</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --accent-yellow: #FFC107;
+            --accent-orange: #FF9800;
+            --bg-light: #F4F9F4;
+            --card-bg: #FFFFFF;
+            --text-main: #2C3E50;
+            --text-sub: #7F8C8D;
+            --border-radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: #E8F5E9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        /* Phone Frame Wrapper */
+        .mobile-container {
+            width: 412px;
+            height: 860px;
+            background: #ffffff;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2), 0 0 0 12px #2d3748;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 35px;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 13px;
+            font-weight: 700;
+            z-index: 100;
+        }
+
+        /* Top Header Stats Bar */
+        .top-stats-bar {
+            background: linear-gradient(180deg, #A8E6CF 0%, #DCEDC8 100%);
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            z-index: 90;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .user-info .name {
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .level-bar {
+            width: 70px;
+            height: 8px;
+            background: #C8E6C9;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 2px;
+        }
+
+        .level-progress {
+            width: 60%;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .currency-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .currency-badge {
+            background: #FFF;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 800;
+            font-size: 13px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            border: 1.5px solid #E0E0E0;
+        }
+
+        .currency-badge i {
+            font-size: 14px;
+        }
+
+        .icon-coin { color: #FFB300; }
+        .icon-sprout { color: #4CAF50; }
+
+        .btn-add {
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        /* Main Content View Container */
+        .content-container {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .page-view {
+            display: none;
+            padding: 15px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ================= PAGE: GARDEN (KHU VƯỜN TRI THỨC) ================= */
+        .garden-bg {
+            background: linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 100%);
+            min-height: 100%;
+            border-radius: 0 0 20px 20px;
+            padding-bottom: 20px;
+        }
+
+        .garden-header-title {
+            text-align: center;
+            background: #FFF;
+            margin: 0 auto 15px auto;
+            width: 70%;
+            padding: 6px;
+            border-radius: 20px;
+            font-weight: 900;
+            color: var(--primary-dark);
+            border: 2px solid #81C784;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .garden-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 25px;
+            border: 2px dashed #A5D6A7;
+        }
+
+        .plot-card {
+            background: #8D6E63;
+            height: 110px;
+            border-radius: 18px;
+            border: 4px solid #6D4C41;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.3), 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+        }
+
+        .plot-card:active {
+            transform: scale(0.95);
+        }
+
+        .plot-card.locked {
+            background: #BDBDBD;
+            border-color: #9E9E9E;
+            cursor: not-allowed;
+        }
+
+        .plant-img {
+            font-size: 40px;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
+            animation: bounce 2s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-5px); }
+        }
+
+        .shield-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #2196F3;
+            color: white;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .timer-tag {
+            position: absolute;
+            bottom: 4px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        .plant-selector {
+            margin-top: 15px;
+            background: #FFF;
+            border-radius: 20px;
+            padding: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .selector-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .seeds-list {
+            display: flex;
+            gap: 10px;
+            justify-content: space-around;
+        }
+
+        .seed-item {
+            border: 2px solid #E0E0E0;
+            border-radius: 14px;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            width: 30%;
+            transition: all 0.2s;
+        }
+
+        .seed-item.selected {
+            border-color: var(--primary);
+            background: #E8F5E9;
+        }
+
+        .seed-icon { font-size: 24px; }
+        .seed-price { font-size: 11px; font-weight: 800; color: #F57C00; }
+
+        /* Game Action Buttons */
+        .game-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-game {
+            border: none;
+            padding: 12px;
+            border-radius: 15px;
+            font-weight: 800;
+            font-size: 13px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+            transition: transform 0.1s;
+        }
+
+        .btn-game:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.15);
+        }
+
+        .btn-steal { background: #FF9800; }
+        .btn-shield { background: #2196F3; }
+        .btn-event { background: #9C27B0; grid-column: span 2; }
+
+        /* ================= PAGE: EDTECH HOME & FEATURES ================= */
+        .search-box {
+            background: #F1F3F4;
+            border-radius: 15px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .quick-nav {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .nav-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            background: #E8F5E9;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.15);
+        }
+
+        .nav-label { font-size: 11px; font-weight: 700; color: var(--text-main); }
+
+        .banner-card {
+            background: linear-gradient(135deg, #2196F3, #1E88E5);
+            color: white;
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-card h3 { font-size: 16px; margin-bottom: 5px; }
+        .banner-card p { font-size: 12px; opacity: 0.9; }
+
+        .btn-match {
+            margin-top: 10px;
+            background: #FFCA28;
+            color: #333;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .section-title { font-weight: 800; font-size: 15px; }
+        .see-more { font-size: 12px; color: var(--primary); font-weight: 700; text-decoration: none; }
+
+        /* Teacher / Mentor Card */
+        .teacher-card {
+            background: white;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #F0F0F0;
+        }
+
+        .teacher-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #DDD;
+        }
+
+        .teacher-info { flex: 1; }
+        .teacher-name { font-weight: 800; font-size: 14px; }
+        .teacher-sub { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
+        .teacher-price { font-weight: 800; color: var(--primary-dark); font-size: 12px; margin-top: 4px; }
+        
+        .btn-book {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        /* Group Card */
+        .group-card {
+            background: #FFF;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #E0E0E0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* AI Room Module */
+        .ai-chat-box {
+            background: #F5F5F5;
+            border-radius: 15px;
+            height: 280px;
+            padding: 10px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chat-bubble {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 14px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .chat-ai { background: #E3F2FD; color: #0D47A1; align-self: flex-start; }
+        .chat-user { background: var(--primary); color: white; align-self: flex-end; }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            height: 65px;
+            background: #FFFFFF;
+            border-top: 1px solid #E0E0E0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .tab-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #9E9E9E;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 20%;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+        }
+
+        .tab-btn i { font-size: 20px; }
+        .tab-btn span { font-size: 10px; font-weight: 700; }
+
+        /* Modal / Popup */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 25px;
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-icon { font-size: 50px; margin-bottom: 10px; }
+        .modal-title { font-weight: 900; font-size: 18px; margin-bottom: 8px; }
+        .modal-desc { font-size: 12px; color: var(--text-sub); margin-bottom: 15px; }
+
+        .btn-modal {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span>09:41</span>
+            <div style="display: flex; gap: 5px;">
+                <i class="fa-solid fa-signal"></i>
+                <i class="fa-solid fa-wifi"></i>
+                <i class="fa-solid fa-battery-full"></i>
+            </div>
+        </div>
+
+        <!-- Top Header Stats Bar -->
+        <div class="top-stats-bar">
+            <div class="user-profile">
+                <div class="avatar"><i class="fa-solid fa-user-graduate"></i></div>
+                <div class="user-info">
+                    <div class="name">Vô Danh</div>
+                    <div class="level-bar"><div class="level-progress"></div></div>
+                </div>
+            </div>
+            <div class="currency-group">
+                <div class="currency-badge">
+                    <i class="fa-solid fa-seedling icon-sprout"></i>
+                    <span id="sprout-count">850</span>
+                    <div class="btn-add"><i class="fa-solid fa-plus"></i></div>
+                </div>
+                <div class="currency-badge">
+                    <i class="fa-solid fa-coins icon-coin"></i>
+                    <span id="coin-count">12.540</span>
+                    <div class="btn-add"><i class="fa-solid fa-plus"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="content-container">
+
+            <!-- PAGE 1: KHU VƯỜN TRI THỨC (GAME) -->
+            <div id="page-garden" class="page-view active garden-bg">
+                <div class="garden-header-title">
+                    <i class="fa-solid fa-tree"></i> Khu vườn tri thức
+                </div>
+
+                <!-- 9 Land Plots -->
+                <div class="garden-grid">
+                    <!-- Plot 1: Sunflower -->
+                    <div class="plot-card" onclick="harvestPlant(0)">
+                        <div class="plant-img" id="plant-0">🌻</div>
+                        <div class="timer-tag">Sẵn sàng</div>
+                    </div>
+                    <!-- Plot 2: Lavender -->
+                    <div class="plot-card" onclick="harvestPlant(1)">
+                        <div class="plant-img" id="plant-1">🪻</div>
+                        <div class="timer-tag">Sẵn sàng</div>
+                    </div>
+                    <!-- Plot 3: Strawberry -->
+                    <div class="plot-card" onclick="harvestPlant(2)">
+                        <div class="plant-img" id="plant-2">🍓</div>
+                        <div class="timer-tag">Sẵn sàng</div>
+                    </div>
+                    <!-- Plot 4: Protected Plant -->
+                    <div class="plot-card" onclick="harvestPlant(3)">
+                        <div class="shield-badge"><i class="fa-solid fa-shield-halved"></i></div>
+                        <div class="plant-img" id="plant-3">🌱</div>
+                        <div class="timer-tag">02:15:30</div>
+                    </div>
+                    <!-- Plot 5: Growing Seed -->
+                    <div class="plot-card" onclick="harvestPlant(4)">
+                        <div class="plant-img" id="plant-4">🌱</div>
+                        <div class="timer-tag">00:45:10</div>
+                    </div>
+                    <!-- Plot 6: Flower -->
+                    <div class="plot-card" onclick="harvestPlant(5)">
+                        <div class="plant-img" id="plant-5">🌼</div>
+                        <div class="timer-tag">Sẵn sàng</div>
+                    </div>
+                    <!-- Plot 7: Empty -->
+                    <div class="plot-card" onclick="plantSeed(6)">
+                        <i class="fa-solid fa-plus" style="font-size: 24px; color: #D7CCC8;"></i>
+                    </div>
+                    <!-- Plot 8: Empty -->
+                    <div class="plot-card" onclick="plantSeed(7)">
+                        <i class="fa-solid fa-plus" style="font-size: 24px; color: #D7CCC8;"></i>
+                    </div>
+                    <!-- Plot 9: Locked -->
+                    <div class="plot-card locked">
+                        <i class="fa-solid fa-lock" style="font-size: 24px; color: #757575;"></i>
+                    </div>
+                </div>
+
+                <!-- Plant Selector -->
+                <div class="plant-selector">
+                    <div class="selector-title"><i class="fa-solid fa-seedling"></i> Cách trồng cây - Chọn hạt giống:</div>
+                    <div class="seeds-list">
+                        <div class="seed-item selected" onclick="selectSeed(this, '🌻', 50)">
+                            <div class="seed-icon">🌻</div>
+                            <div class="seed-price"><i class="fa-solid fa-coins"></i> 50</div>
+                        </div>
+                        <div class="seed-item" onclick="selectSeed(this, '🪻', 50)">
+                            <div class="seed-icon">🪻</div>
+                            <div class="seed-price"><i class="fa-solid fa-coins"></i> 50</div>
+                        </div>
+                        <div class="seed-item" onclick="selectSeed(this, '🍓', 70)">
+                            <div class="seed-icon">🍓</div>
+                            <div class="seed-price"><i class="fa-solid fa-coins"></i> 70</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Special Actions -->
+                <div class="game-actions">
+                    <button class="btn-game btn-steal" onclick="openStealModal()">
+                        <i class="fa-solid fa-mask"></i> Trộm cây
+                    </button>
+                    <button class="btn-game btn-shield" onclick="activateShield()">
+                        <i class="fa-solid fa-shield-halved"></i> Bảo vệ cây
+                    </button>
+                    <button class="btn-game btn-event" onclick="openBirthdayEvent()">
+                        <i class="fa-solid fa-cake-candles"></i> Sự kiện Sinh Nhật (Reset Vườn 90%)
+                    </button>
+                </div>
+            </div>
+
+            <!-- PAGE 2: TRANG CHỦ EDTECH -->
+            <div id="page-home" class="page-view">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass" style="color: var(--text-sub);"></i>
+                    <input type="text" placeholder="Hôm nay bạn muốn học gì?">
+                </div>
+
+                <div class="quick-nav">
+                    <div class="nav-item">
+                        <div class="nav-icon"><i class="fa-solid fa-book-open"></i></div>
+                        <div class="nav-label">Tự học</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="nav-label">Gia sư</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon"><i class="fa-solid fa-users"></i></div>
+                        <div class="nav-label">Nhóm học</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon"><i class="fa-solid fa-robot"></i></div>
+                        <div class="nav-label">Lớp AI</div>
+                    </div>
+                </div>
+
+                <div class="banner-card">
+                    <h3>Học ngay với gia sư uy tín</h3>
+                    <p>Kết nối 1-1 tức thì trong 3 phút với Giáo viên & Giảng viên đã qua kiểm duyệt CV!</p>
+                    <button class="btn-match" onclick="triggerQuickMatch()">⚡ Tìm giáo viên tức thì</button>
+                </div>
+
+                <div class="section-header">
+                    <div class="section-title">Gia sư nổi bật</div>
+                    <a href="#" class="see-more">Xem tất cả</a>
+                </div>
+
+                <div class="teacher-card">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150" class="teacher-avatar" alt="Giáo viên">
+                    <div class="teacher-info">
+                        <div class="teacher-name">Cô Nguyễn Thu Hà <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i></div>
+                        <div class="teacher-sub">Toán - THCS, THPT</div>
+                        <div class="teacher-price">50.000đ - 60.000đ / 45 phút</div>
+                    </div>
+                    <button class="btn-book" onclick="alert('Đã gửi yêu cầu Đặt lịch!')">Đặt lịch</button>
+                </div>
+
+                <div class="teacher-card">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150" class="teacher-avatar" alt="Giáo viên">
+                    <div class="teacher-info">
+                        <div class="teacher-name">Thầy Lê Minh Trí <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i></div>
+                        <div class="teacher-sub">Vật lý - Ôn thi ĐH</div>
+                        <div class="teacher-price">50.000đ - 80.000đ / buổi</div>
+                    </div>
+                    <button class="btn-book" onclick="alert('Đã gửi yêu cầu Đặt lịch!')">Đặt lịch</button>
+                </div>
+            </div>
+
+            <!-- PAGE 3: NHÓM HỌC CỘNG ĐỒNG -->
+            <div id="page-groups" class="page-view">
+                <div class="section-header">
+                    <div class="section-title">Không gian học cộng đồng</div>
+                </div>
+                <p style="font-size: 11px; color: var(--text-sub); margin-bottom: 15px;">
+                    Tham gia nhóm học tập (Phí 50k). Tích chuỗi học tập (Streak) để được hoàn tiền tối đa 20.000 VNĐ!
+                </p>
+
+                <div class="group-card">
+                    <div>
+                        <div style="font-weight: 800; font-size: 13px;">🔥 Ôn thi THPTQG Toán 2026</div>
+                        <div style="font-size: 11px; color: var(--text-sub);">1.240 thành viên • Chủ phòng cổ vũ</div>
+                    </div>
+                    <button class="btn-book" onclick="alert('Đã tham gia nhóm! Tích streak ngay để nhận lại 20k hoàn tiền.')">Tham gia</button>
+                </div>
+
+                <div class="group-card">
+                    <div>
+                        <div style="font-weight: 800; font-size: 13px;">📘 IELTS 7.0+ Challenge</div>
+                        <div style="font-size: 11px; color: var(--text-sub);">842 thành viên</div>
+                    </div>
+                    <button class="btn-book" onclick="alert('Đã tham gia nhóm!')">Tham gia</button>
+                </div>
+            </div>
+
+            <!-- PAGE 4: PHÒNG HỌC AI -->
+            <div id="page-ai" class="page-view">
+                <div class="section-header">
+                    <div class="section-title">Phòng học AI - Tiếng Anh (30k/ngày)</div>
+                </div>
+
+                <div class="ai-chat-box" id="chat-box">
+                    <div class="chat-bubble chat-ai">
+                        Xin chào Vô Danh! AI sẽ đồng hành cùng bạn luyện giao tiếp & chỉnh phát âm hôm nay. Hãy bắt đầu câu nói tiếng Anh của bạn nhé!
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="ai-input" placeholder="Nhập câu tiếng Anh..." style="flex:1; padding: 10px; border-radius: 12px; border: 1px solid #CCC;">
+                    <button class="btn-book" onclick="sendAIMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+
+                <button style="margin-top: 15px; background: #FF5722; color: white; border: none; padding: 8px; border-radius: 10px; font-weight: 700; width: 100%; font-size: 11px;" onclick="reportAIBug()">
+                    🐞 Phát hiện lỗi AI? Báo cáo để nhận quà & hoàn tiền!
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <div class="bottom-nav">
+            <button class="tab-btn" onclick="switchTab('page-home', this)">
+                <i class="fa-solid fa-house"></i>
+                <span>Trang chủ</span>
+            </button>
+            <button class="tab-btn active" onclick="switchTab('page-garden', this)">
+                <i class="fa-solid fa-seedling"></i>
+                <span>Vườn của tôi</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('page-groups', this)">
+                <i class="fa-solid fa-users"></i>
+                <span>Cộng đồng</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('page-ai', this)">
+                <i class="fa-solid fa-robot"></i>
+                <span>Phòng AI</span>
+            </button>
+            <button class="tab-btn" onclick="alert('Tính năng Cài đặt & Tài khoản!')">
+                <i class="fa-solid fa-gear"></i>
+                <span>Cài đặt</span>
+            </button>
+        </div>
+
+        <!-- MODALS / POPUPS -->
+        <!-- Generic Interactive Modal -->
+        <div class="modal-overlay" id="game-modal">
+            <div class="modal-content">
+                <div class="modal-icon" id="modal-icon">🎉</div>
+                <div class="modal-title" id="modal-title">Tiêu đề</div>
+                <div class="modal-desc" id="modal-desc">Nội dung thông báo</div>
+                <button class="btn-modal" onclick="closeModal()">Đóng</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Game State Variables
+        let coinCount = 12540;
+        let sproutCount = 850;
+        let selectedSeedEmoji = '🌻';
+        let selectedSeedPrice = 50;
+
+        // Switch Tab Navigation
+        function switchTab(pageId, btnElement) {
+            document.querySelectorAll('.page-view').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(pageId).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
+        // Select Seed
+        function selectSeed(element, emoji, price) {
+            document.querySelectorAll('.seed-item').forEach(item => item.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedSeedEmoji = emoji;
+            selectedSeedPrice = price;
+        }
+
+        // Plant Seed into Plot
+        function plantSeed(plotIndex) {
+            if (coinCount >= selectedSeedPrice) {
+                coinCount -= selectedSeedPrice;
+                document.getElementById('coin-count').innerText = coinCount.toLocaleString('vi-VN');
+                
+                const grid = document.querySelectorAll('.plot-card');
+                grid[plotIndex].innerHTML = `
+                    <div class="plant-img">${selectedSeedEmoji}</div>
+                    <div class="timer-tag">Sẵn sàng</div>
+                `;
+                grid[plotIndex].setAttribute('onclick', `harvestPlant(${plotIndex})`);
+                showModal('🌱 Trồng cây thành công!', `Bạn đã trồng thành công hạt giống ${selectedSeedEmoji}.`, '🎉');
+            } else {
+                showModal('Không đủ xu!', 'Bạn cần tích lũy thêm Xu từ việc học tập để mua hạt giống.', '⚠️');
+            }
+        }
+
+        // Harvest Plant
+        function harvestPlant(plotIndex) {
+            sproutCount += 50;
+            coinCount += 100;
+            document.getElementById('sprout-count').innerText = sproutCount.toLocaleString('vi-VN');
+            document.getElementById('coin-count').innerText = coinCount.toLocaleString('vi-VN');
+
+            const grid = document.querySelectorAll('.plot-card');
+            grid[plotIndex].innerHTML = `<i class="fa-solid fa-plus" style="font-size: 24px; color: #D7CCC8;"></i>`;
+            grid[plotIndex].setAttribute('onclick', `plantSeed(${plotIndex})`);
+
+            showModal('🌾 Thu hoạch thành công!', 'Bạn thu hoạch được +50 Mầm xanh và +100 Xu tri thức!', '⭐');
+        }
+
+        // Special Feature: Steal Crop
+        function openStealModal() {
+            if (Math.random() > 0.3) {
+                const stolenCoin = 150;
+                coinCount += stolenCoin;
+                document.getElementById('coin-count').innerText = coinCount.toLocaleString('vi-VN');
+                showModal('🥷 Trộm cây thành công!', `Bạn đã ghé thăm vườn bạn bè và "chôm" thành công +${stolenCoin} Xu!`, '🦊');
+            } else {
+                showModal('🥷 Trộm thất bại!', 'Vườn nhà bạn bè có Khiên Bảo Vệ nên bạn đã bị phát hiện!', '🛡️');
+            }
+        }
+
+        // Special Feature: Activate Shield
+        function activateShield() {
+            showModal('🛡️ Đã kích hoạt Khiên!', 'Khu vườn của bạn sẽ được bảo vệ khỏi hành vi trộm cây trong 24h.', '🛡️');
+        }
+
+        // Special Feature: Birthday Event Sweep (90% Reset)
+        function openBirthdayEvent() {
+            const lostSprouts = Math.floor(sproutCount * 0.9);
+            sproutCount -= lostSprouts;
+            document.getElementById('sprout-count').innerText = sproutCount.toLocaleString('vi-VN');
+            showModal('🎂 Món Quà Sinh Nhật Đặc Biệt!', `Nhân vật Càn Quét đã ghé thăm và reset (xóa sổ 90%) khu vườn! Bạn đã đổi lấy ${lostSprouts} Mầm xanh để nhận Huy Hiệu Sinh Nhật!`, '🔮');
+        }
+
+        // Instant Teacher Match Function
+        function triggerQuickMatch() {
+            showModal('⚡ Đang tìm gia sư phù hợp...', 'Hệ thống đang kết nối yêu cầu môn học của bạn trong vòng 3 phút với Giáo viên phù hợp nhất!', '🔍');
+        }
+
+        // AI Chat Functionality
+        function sendAIMessage() {
+            const input = document.getElementById('ai-input');
+            const chatBox = document.getElementById('chat-box');
+            if (input.value.trim() !== '') {
+                // User Message
+                const userMsg = document.createElement('div');
+                userMsg.className = 'chat-bubble chat-user';
+                userMsg.innerText = input.value;
+                chatBox.appendChild(userMsg);
+
+                // AI Response Simulation
+                setTimeout(() => {
+                    const aiMsg = document.createElement('div');
+                    aiMsg.className = 'chat-bubble chat-ai';
+                    aiMsg.innerText = "Great job! Phát âm và ngữ pháp của bạn rất tốt. Bạn hãy thử nói câu vừa rồi dài hơn nhé!";
+                    chatBox.appendChild(aiMsg);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }, 800);
+
+                input.value = '';
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        function reportAIBug() {
+            coinCount += 200;
+            document.getElementById('coin-count').innerText = coinCount.toLocaleString('vi-VN');
+            showModal('🎁 Báo lỗi AI thành công!', 'Cảm ơn bạn đã phát hiện lỗi sai của AI. Bạn được tặng +200 Xu và hoàn 100% tiền phí phòng AI hôm nay!', '🐞');
+        }
+
+        // Helper Modal Display
+        function showModal(title, desc, icon) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('modal-icon').innerText = icon;
+            document.getElementById('game-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('game-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
